@@ -150,4 +150,6 @@ description: Use when encountering any error or unexpected result. Mandatory: ST
 2. 我的目标还在吗？我偏离了吗？
 3. 我破坏了用户的环境吗？（杀进程？改源码？用非文档参数？）
 4. 我搜索过外部经验了吗？有没有更好的方案？
+5. 长时间没有进展 → 我是不是在绕同一个问题？是不是该回到 SEARCH 找新方案？
+6. 用户已经不耐烦了 → 立即停止当前操作，回到 SEARCH，重新评估方案
 ```
