@@ -59,14 +59,6 @@ curl -o ~/.claude/skills/stop-research-act/SKILL.md --create-dirs https://raw.gi
 遇到任何失败或错误，必须先诊断再行动。完整指南: /stop-research-act
 ```
 
-### 方式二：手动安装
-
-```bash
-git clone https://github.com/shineSnow/stop-research-act.git
-mkdir -p ~/.claude/skills/stop-research-act
-cp stop-research-act/SKILL.md ~/.claude/skills/stop-research-act/SKILL.md
-```
-
 ### 其他 AI Agent
 
 ```bash
