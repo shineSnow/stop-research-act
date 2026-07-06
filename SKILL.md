@@ -96,9 +96,11 @@ description: Use when encountering any error or unexpected result. Mandatory: ST
 
 ## 第四步: [EXECUTE] 执行
 
-- 一次只改一个变量
-- 立即验证每步结果
-- 记录每步的实际结果 vs 预期
+**如果方案已通过 SEARCH 和 FEASIBILITY 验证，直接应用，无需每一步验证。**
+
+- 基于搜索到的成熟方案，按步骤执行
+- 每步完成后确认结果符合预期
+- 遇到失败立即 STOP，不要继续下一步
 
 ---
 
@@ -128,7 +130,7 @@ description: Use when encountering any error or unexpected result. Mandatory: ST
 | 2 | **失败先诊断** — 禁止不诊断就重试 |
 | 3 | **不确定先搜索** — 外部经验 + 官方文档，禁止猜测 |
 | 4 | **3次失败强制暂停** — 深入搜索，归纳共同路径 |
-| 5 | **一次只改一个变量** — 多个变更混在一起无法判断 |
+| 5 | **方案已验证就大胆执行** — SEARCH + FEASIBILITY 通过后直接应用，不必每一步试探 |
 
 ---
 
