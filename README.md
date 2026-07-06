@@ -1,0 +1,149 @@
+# Stop-Research-Act
+
+## AI Agent 问题解决 SOP
+
+一个让 AI Agent（Claude Code、Cursor、Codex 等）在遇到错误时**不再盲目重试**的技能文件。
+
+### 解决的问题
+
+你有没有遇到过这种情况：让 AI 做一件事 → 报错 → AI 开始疯狂换方案 → 20 分钟过去了，改了无数配置，不仅没解决，还把环境搞乱了。
+
+这不是个例。大模型在执行任务时天然倾向于"失败 → 立即换方案重试"——因为它的自回归机制偏向向前推进，而不是停下来归纳分析。每个 AI Agent 用户都会遇到这个模式。
+
+**Stop-Research-Act 解决的就是这个问题。**
+
+### 核心理念
+
+```
+失败后，禁止不诊断就直接换方案重试。
+不确定根因时，禁止凭猜测行动。
+```
+
+### 五步闭环
+
+```
+执行 → 失败 → [STOP] → [RESEARCH] → [REFLECT] → [ACT] → 验证成功
+```
+
+| 步骤 | 做什么 | 禁止做什么 |
+|------|--------|-----------|
+| **STOP** | 读取错误信息，提取关键线索，分类问题 | 禁止立即换方案重试 |
+| **RESEARCH** | 查官方文档，搜索相同问题 | 禁止凭猜测行动 |
+| **REFLECT** | 形成可验证的假设 | 禁止跳过假设直接修复 |
+| **ACT** | 最小化修改，一次只改一个变量，立即验证 | 禁止同时改多个配置 |
+
+### 六条铁律
+
+1. 失败后禁止直接换方案重试——必须先诊断
+2. 不确定根因时禁止凭猜测行动——必须先查文档/搜索
+3. 同一方向失败 3 次，强制暂停并归纳共同路径
+4. 一次只改一个变量
+5. 请求用户操作前，必须能说清为什么是必要的、依据是什么
+6. 深入一个工具优于浅试五个工具
+
+---
+
+## 安装
+
+### 方式一：Claude Code（推荐）
+
+```bash
+# 下载 skill 文件到 Claude Code skills 目录
+mkdir -p ~/.claude/skills/stop-research-act
+curl -o ~/.claude/skills/stop-research-act/SKILL.md \
+  https://raw.githubusercontent.com/shineSnow/stop-research-act/main/SKILL.md
+```
+
+然后在 `~/.claude/CLAUDE.md` 中添加：
+
+```markdown
+## 问题解决 SOP
+
+遇到任何失败或错误，必须先诊断再行动。完整指南: /stop-research-act
+```
+
+### 方式二：手动安装
+
+```bash
+git clone https://github.com/shineSnow/stop-research-act.git
+mkdir -p ~/.claude/skills/stop-research-act
+cp stop-research-act/SKILL.md ~/.claude/skills/stop-research-act/SKILL.md
+```
+
+### 方式三：任意 AI Agent
+
+这个 skill 是一个纯 Markdown 文件，可以复制到任何支持的 AI Agent 的 skills/instructions 目录中使用：
+
+- **Cursor**: `.cursor/rules/` 目录
+- **Claude Desktop**: 通过 MCP skills 加载
+- **其他 Agent**: 作为 system prompt 或 instructions 文件加载
+
+---
+
+## 使用方式
+
+### 自动生效
+
+如果你在 `~/.claude/CLAUDE.md` 中配置了引用，每次新会话会自动加载核心规则。
+
+### 手动调用
+
+```
+/stop-research-act
+```
+
+加载完整 SOP 到上下文。
+
+### 适用场景
+
+- 命令执行报错
+- API/服务连接失败
+- 页面状态与预期不符
+- 配置不生效
+- **尤其是：已经尝试了 2 次以上还没解决的问题**
+
+---
+
+## 为什么这个 Skill 有效
+
+大模型天然容易陷入"试错循环"有四个原因：
+
+1. **自回归生成偏向向前推进** — 看到错误，下一个合理 token 是"让我试试另一个方法"，而不是"停下来分析"
+2. **训练数据缺少调试过程** — 互联网上只有结论没有思维过程
+3. **没有真实的失败挫败感** — 每次失败都是平等的新输入，不会自动提高警惕
+4. **行动产生输出，分析没有输出** — 模型天然倾向于展示"在推进"
+
+这个 skill 通过**结构化的强制流程**打断了这个循环：在"失败"和"重试"之间插入了三步不可跳过的诊断环节。
+
+---
+
+## 示例
+
+### ❌ 不使用这个 skill 的行为
+
+```
+$ 命令 → 报错
+→ "让我换个参数试试"
+→ 又报错
+→ "换个工具试试"
+→ 又报错
+→ "你重启一下试试"
+→ 20分钟过去了，问题没解决，环境被搞乱
+```
+
+### ✅ 使用这个 skill 的行为
+
+```
+$ 命令 → 报错
+→ [STOP] 错误是连接超时，端口 9222，发生在连接层
+→ [RESEARCH] 查文档：Chrome 150 的 CDP 端点行为有变化
+→ [REFLECT] 假设：/json/version 返回 404 但 WebSocket 仍可用
+→ [ACT] 验证：curl /json/version → 404；WebSocket 握手 → 101
+→ 确认假设，用 WebSocket 直接操作，问题解决
+```
+
+---
+
+## License
+
+MIT
