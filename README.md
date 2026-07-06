@@ -43,15 +43,12 @@
 
 ---
 
-## 安装
+## 一行命令安装
 
-### 方式一：Claude Code（推荐）
+### Claude Code
 
 ```bash
-# 下载 skill 文件到 Claude Code skills 目录
-mkdir -p ~/.claude/skills/stop-research-act
-curl -o ~/.claude/skills/stop-research-act/SKILL.md \
-  https://raw.githubusercontent.com/shineSnow/stop-research-act/main/SKILL.md
+curl -o ~/.claude/skills/stop-research-act/SKILL.md --create-dirs https://raw.githubusercontent.com/shineSnow/stop-research-act/main/SKILL.md
 ```
 
 然后在 `~/.claude/CLAUDE.md` 中添加：
@@ -70,13 +67,16 @@ mkdir -p ~/.claude/skills/stop-research-act
 cp stop-research-act/SKILL.md ~/.claude/skills/stop-research-act/SKILL.md
 ```
 
-### 方式三：任意 AI Agent
+### 其他 AI Agent
 
-这个 skill 是一个纯 Markdown 文件，可以复制到任何支持的 AI Agent 的 skills/instructions 目录中使用：
+```bash
+# Cursor
+cp SKILL.md ~/.cursor/rules/stop-research-act.md
 
-- **Cursor**: `.cursor/rules/` 目录
-- **Claude Desktop**: 通过 MCP skills 加载
-- **其他 Agent**: 作为 system prompt 或 instructions 文件加载
+# 任意 Agent  
+# 将 SKILL.md 复制到该 Agent 的 skills/instructions 目录
+# 或将其内容附加到 system prompt 中
+```
 
 ---
 
